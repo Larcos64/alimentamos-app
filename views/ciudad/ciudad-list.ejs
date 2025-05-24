@@ -1,0 +1,33 @@
+<%- include('../layout') %>
+
+<div class="container mt-4">
+  <h2>Lista de Ciudades</h2>
+  <a href="/ciudad/nueva" class="btn btn-primary mb-3">Agregar Ciudad</a>
+  
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Nombre</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (ciudades.length > 0) { %>
+        <% ciudades.forEach(ciudad => { %>
+          <tr>
+            <td><%= ciudad.codigo %></td>
+            <td><%= ciudad.nombre %></td>
+            <td>
+              <a href="/ciudad/eliminar/<%= ciudad.codigo %>" class="btn btn-danger btn-sm">Eliminar</a>
+            </td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr>
+          <td colspan="3" class="text-center">No hay ciudades registradas.</td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
