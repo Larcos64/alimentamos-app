@@ -1,33 +1,88 @@
 <%- include('../layout') %>
 
-<div class="container mt-4">
-  <h2>Lista de Ciudades</h2>
-  <a href="/ciudad/nueva" class="btn btn-primary mb-3">Agregar Ciudad</a>
-  
-  <table class="table table-bordered">
-    <thead>
-      <tr>
-        <th>Código</th>
-        <th>Nombre</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% if (ciudades.length > 0) { %>
-        <% ciudades.forEach(ciudad => { %>
-          <tr>
-            <td><%= ciudad.codigo %></td>
-            <td><%= ciudad.nombre %></td>
-            <td>
-              <a href="/ciudad/eliminar/<%= ciudad.codigo %>" class="btn btn-danger btn-sm">Eliminar</a>
-            </td>
-          </tr>
-        <% }) %>
-      <% } else { %>
+  <div class="container mt-4">
+    <h2>Lista de Ciudades</h2>
+
+    <!-- Botón para abrir modal en modo agregar -->
+    <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#formCiudadModal"
+      onclick="abrirModalAgregar()">
+      Agregar Ciudad
+    </button>
+
+    <!-- Tabla de ciudades -->
+    <table class="table table-bordered">
+      <thead>
         <tr>
-          <td colspan="3" class="text-center">No hay ciudades registradas.</td>
+          <th>Código</th>
+          <th>Nombre</th>
+          <th>Acciones</th>
         </tr>
-      <% } %>
-    </tbody>
-  </table>
-</div>
+      </thead>
+      <tbody>
+        <% if (ciudades.length> 0) { %>
+          <% ciudades.forEach(ciudad=> { %>
+            <tr>
+              <td>
+                <%= ciudad.codigo %>
+              </td>
+              <td>
+                <%= ciudad.nombre %>
+              </td>
+              <td>
+                <button class="btn btn-warning btn-sm"
+                  onclick="abrirModalEditar('<%= ciudad.codigo %>', '<%= ciudad.nombre %>')" data-bs-toggle="modal"
+                  data-bs-target="#formCiudadModal">Editar</button>
+                <a href="/ciudad/eliminar/<%= ciudad.codigo %>" class="btn btn-danger btn-sm">Eliminar</a>
+              </td>
+            </tr>
+            <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="3" class="text-center">No hay ciudades registradas.</td>
+                </tr>
+                <% } %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal para agregar/editar ciudad -->
+  <div class="modal fade" id="formCiudadModal" tabindex="-1" aria-labelledby="formCiudadLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="formCiudad" method="POST">
+          <div class="modal-header">
+            <h5 class="modal-title" id="formCiudadLabel">Agregar Ciudad</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="codigo" name="codigo">
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre de la Ciudad</label>
+              <input type="text" class="form-control" id="nombre" name="nombre" required>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script para manejar edición/agregación -->
+  <script>
+    function abrirModalAgregar() {
+      document.getElementById('formCiudadLabel').textContent = 'Agregar Ciudad';
+      document.getElementById('formCiudad').action = '/ciudad/guardar';
+      document.getElementById('nombre').value = '';
+      document.getElementById('codigo').value = '';
+    }
+
+    function abrirModalEditar(codigo, nombre) {
+      document.getElementById('formCiudadLabel').textContent = 'Editar Ciudad';
+      document.getElementById('formCiudad').action = '/ciudad/editar/' + codigo;
+      document.getElementById('nombre').value = nombre;
+      document.getElementById('codigo').value = codigo;
+    }
+  </script>

@@ -1,29 +1,122 @@
-<h2>Lista de Clientes</h2>
+<%- include('../layout') %>
 
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th>Identificación</th>
-      <th>Nombre</th>
-      <th>Teléfonos</th>
-      <th>Dirección</th>
-      <th>Ciudad</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>123456789</td>
-      <td>Juan Pérez</td>
-      <td>3001234567</td>
-      <td>Calle 123 #45-67</td>
-      <td>Bogotá</td>
-    </tr>
-    <tr>
-      <td>987654321</td>
-      <td>María Gómez</td>
-      <td>3109876543</td>
-      <td>Carrera 10 #20-30</td>
-      <td>Medellín</td>
-    </tr>
-  </tbody>
-</table>
+  <div class="container mt-4">
+    <h2>Lista de Clientes</h2>
+    <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#clienteModal"
+      onclick="abrirModalCliente()">Agregar Cliente</button>
+
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Dirección</th>
+          <th>Ciudad</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (clientes.length> 0) { %>
+          <% clientes.forEach(cliente=> { %>
+            <tr>
+              <td>
+                <%= cliente.id %>
+              </td>
+              <td>
+                <%= cliente.nombre %>
+              </td>
+              <td>
+                <%= cliente.direccion %>
+              </td>
+              <td>
+                <%= cliente.nombre_ciudad || 'N/A' %>
+              </td>
+              <td>
+                <button class="btn btn-warning btn-sm"
+                  onclick="abrirModalEditarCliente('<%= cliente.id %>', '<%= cliente.nombre %>', '<%= cliente.direccion %>', '<%= cliente.cod_ciudad %>')"
+                  data-bs-toggle="modal" data-bs-target="#clienteModal">
+                  Editar
+                </button>
+                <a href="/cliente/eliminar/<%= cliente.id %>" class="btn btn-danger btn-sm">Eliminar</a>
+              </td>
+            </tr>
+            <% }) %>
+              <% } else { %>
+                <tr>
+                  <td colspan="5" class="text-center">No hay clientes registrados.</td>
+                </tr>
+                <% } %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal para agregar/editar cliente -->
+  <div class="modal fade" id="clienteModal" tabindex="-1" aria-labelledby="clienteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" id="formCliente">
+          <div class="modal-header">
+            <h5 class="modal-title" id="clienteModalLabel">Agregar Cliente</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label for="identificacion" class="form-label">Identificación</label>
+              <input type="text" class="form-control" id="identificacion" name="id" required>
+            </div>
+
+            <div class="mb-3">
+              <label for="nombre" class="form-label">Nombre</label>
+              <input type="text" class="form-control" id="nombre" name="nombre" required>
+            </div>
+            <div class="mb-3">
+              <label for="direccion" class="form-label">Dirección</label>
+              <input type="text" class="form-control" id="direccion" name="direccion">
+            </div>
+            <div class="mb-3">
+              <label for="cod_ciudad" class="form-label">Ciudad</label>
+              <select class="form-select" id="cod_ciudad" name="cod_ciudad" required>
+                <option value="">Seleccione una ciudad</option>
+                <% ciudades.forEach(c=> { %>
+                  <option value="<%= c.codigo %>">
+                    <%= c.nombre %>
+                  </option>
+                  <% }) %>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function abrirModalCliente() {
+      document.getElementById('clienteModalLabel').textContent = 'Agregar Cliente';
+      document.getElementById('formCliente').action = '/cliente/guardar';
+
+      document.getElementById('identificacion').value = '';
+      document.getElementById('identificacion').readOnly = false;
+
+      document.getElementById('nombre').value = '';
+      document.getElementById('direccion').value = '';
+      document.getElementById('cod_ciudad').value = '';
+    }
+
+    function abrirModalEditarCliente(id, nombre, direccion, cod_ciudad) {
+      document.getElementById('clienteModalLabel').textContent = 'Editar Cliente';
+      document.getElementById('formCliente').action = '/cliente/editar/' + id;
+
+      document.getElementById('identificacion').value = id;
+      document.getElementById('identificacion').readOnly = true;
+      document.getElementById('identificacion').disabled = true;
+
+      document.getElementById('nombre').value = nombre;
+      document.getElementById('direccion').value = direccion;
+      document.getElementById('cod_ciudad').value = cod_ciudad;
+    }
+  </script>
