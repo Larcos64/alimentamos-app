@@ -5,10 +5,14 @@
     <meta charset="UTF-8">
     <title>Alimentamos App</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
+</head>
 
+<body>
+    <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">Alimentamos S.A.</a>
@@ -51,10 +55,11 @@
             </div>
         </div>
     </nav>
-</head>
 
-<body>
     <!-- Aquí se incluirá manualmente el contenido en cada vista -->
+    <div class="container mt-4">
+        <%- body %>
+    </div>
 </body>
 
 </html>

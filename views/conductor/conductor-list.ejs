@@ -1,4 +1,4 @@
-<%- include('../layout') %>
+<% layout('layout') %>
 
   <div class="container mt-4">
     <h2>Lista de Conductores</h2>
@@ -44,9 +44,8 @@
                   Editar
                 </button>
 
-
-                Editar
-                </button>
+                <button class="btn btn-info btn-sm"
+                  onclick="abrirModalTelefonos('<%= c.id %>', '<%= c.nombres %> <%= c.apellidos %>')">Teléfonos</button>
 
                 <a href="/conductor/eliminar/<%= c.id %>" class="btn btn-danger btn-sm">Eliminar</a>
               </td>
@@ -101,20 +100,36 @@
     </div>
   </div>
 
+  <!-- Modal Teléfonos -->
+  <div class="modal fade" id="telefonosModal" tabindex="-1" aria-labelledby="telefonosModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="formTelefono" method="POST">
+          <div class="modal-header">
+            <h5 class="modal-title" id="telefonosModalLabel">Teléfonos de Conductor</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="telefono_id_conductor" name="id_conductor">
+            <div class="mb-3">
+              <label for="telefono" class="form-label">Nuevo Teléfono</label>
+              <input type="text" class="form-control" id="telefono" name="telefono" required>
+            </div>
+            <div class="mb-3">
+              <strong>Teléfonos actuales:</strong>
+              <ul id="listaTelefonos" class="lista-telefonos"></ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Agregar Teléfono</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <script>
-    /* function abrirModalConductor() {
-      document.getElementById('conductorModalLabel').textContent = 'Agregar Conductor';
-      document.getElementById('formConductor').action = '/conductor/guardar';
-
-      document.getElementById('id').value = '';
-      document.getElementById('id').readOnly = false;
-      document.getElementById('nombres').value = '';
-      document.getElementById('apellidos').value = '';
-      document.getElementById('direccion').value = '';
-      document.getElementById('fecha_ingreso').value = '';
-    } */
-
     function abrirModalEditarConductorDesdeDataset(button) {
       // Leer los datos del botón
       const id = button.dataset.id;
@@ -153,4 +168,76 @@
       document.getElementById('direccion').value = '';
       document.getElementById('fecha_ingreso').value = '';
     }
+
+    async function abrirModalTelefonos(id, nombreCompleto) {
+      document.getElementById('telefonosModalLabel').textContent = `Teléfonos de ${nombreCompleto}`;
+      document.getElementById('telefono_id_conductor').value = id;
+      document.getElementById('formTelefono').action = `/conductor/telefonos_conductor/agregar/${id}`;
+
+      const lista = document.getElementById('listaTelefonos');
+      lista.innerHTML = '';
+
+      try {
+        const res = await fetch(`/conductor/telefonos_conductor/listar/${id}`);
+        const data = await res.json();
+        // Insertar nuevos elementos
+        data.telefonos.forEach(t => {
+          const li = document.createElement('li');
+          li.classList.add('d-flex', 'align-items-center', 'mb-2'); // mejor presentación
+
+          li.innerHTML = `
+        <span class="me-2">${t.telefono}</span>
+        <button class="btn btn-sm btn-warning me-1" onclick="editarTelefono(${t.id}, '${t.telefono}')">Editar</button>
+        <button class="btn btn-sm btn-danger" onclick="eliminarTelefono(${t.id}, ${id})">Eliminar</button>
+      `;
+
+          lista.appendChild(li);
+        });
+      } catch (err) {
+        console.error('Error al obtener teléfonos:', err);
+      }
+
+      const modal = new bootstrap.Modal(document.getElementById('telefonosModal'));
+      modal.show();
+    }
+
+    async function eliminarTelefono(idTelefono, idConductor) {
+      if (!confirm('¿Estás seguro de eliminar este teléfono?')) return;
+
+      try {
+        await fetch(`/conductor/telefonos_conductor/eliminar/${idTelefono}`, {
+          method: 'DELETE',
+        });
+
+        // Recargar los teléfonos
+        abrirModalTelefonos(idConductor, '');
+      } catch (err) {
+        console.error('Error al eliminar teléfono:', err);
+      }
+    }
+
+    function editarTelefono(idTelefono, telefonoActual) {
+      const nuevoTelefono = prompt('Editar teléfono:', telefonoActual);
+      if (!nuevoTelefono) return;
+
+      fetch(`/conductor/telefonos_conductor/editar/${idTelefono}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ telefono: nuevoTelefono })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            // Recargar la lista de teléfonos
+            const idConductor = document.getElementById('telefono_id_conductor').value;
+            abrirModalTelefonos(idConductor, '');
+          } else {
+            alert('Error al editar teléfono');
+          }
+        })
+        .catch(err => console.error('Error al editar teléfono:', err));
+    }
+
   </script>
