@@ -1,0 +1,141 @@
+<% layout('layout') %>
+
+    <div class="container mt-4">
+        <h2>Lista de Rutas</h2>
+        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#rutaModal"
+            onclick="abrirModalRuta()">Agregar Ruta</button>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Ciudad Origen</th>
+                    <th>Ciudad Destino</th>
+                    <th>Costo</th>
+                    <th>Fecha Apertura</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (rutas.length> 0) { %>
+                    <% rutas.forEach(r=> { %>
+                        <tr>
+                            <td>
+                                <%= r.id %>
+                            </td>
+                            <td>
+                                <%= r.nombre %>
+                            </td>
+                            <td>
+                                <%= r.ciudad_origen %>
+                            </td>
+                            <td>
+                                <%= r.ciudad_destino %>
+                            </td>
+                            <td>
+                                $<%= parseFloat(r.costo_actual).toFixed(2) %>
+                            </td>
+                            <td>
+                                <%= r.fecha_apertura ? r.fecha_apertura.toISOString().split('T')[0] : '' %>
+                            </td>
+                            <td>
+                                <button class="btn btn-warning btn-sm"
+                                    onclick="abrirModalEditarRuta('<%= r.id %>', '<%= r.nombre %>', '<%= r.cod_ciudad_origen %>', '<%= r.cod_ciudad_destino %>', '<%= r.costo_actual %>', '<%= r.fecha_apertura_formateada %>')"
+                                    data-bs-toggle="modal" data-bs-target="#rutaModal">
+                                    Editar
+                                </button>
+                                <a href="/ruta/eliminar/<%= r.id %>" class="btn btn-danger btn-sm">Eliminar</a>
+                            </td>
+                        </tr>
+                        <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="7" class="text-center">No hay rutas registradas.</td>
+                                </tr>
+                                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal Ruta -->
+    <div class="modal fade" id="rutaModal" tabindex="-1" aria-labelledby="rutaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" id="formRuta">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rutaModalLabel">Agregar Ruta</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id" id="ruta_id">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-control" name="nombre" id="ruta_nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ciudad Origen</label>
+                            <select class="form-select" name="cod_ciudad_origen" id="ruta_origen" required>
+                                <option value="">Seleccione ciudad</option>
+                                <% ciudades.forEach(c=> { %>
+                                    <option value="<%= c.codigo %>">
+                                        <%= c.nombre %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ciudad Destino</label>
+                            <select class="form-select" name="cod_ciudad_destino" id="ruta_destino" required>
+                                <option value="">Seleccione ciudad</option>
+                                <% ciudades.forEach(c=> { %>
+                                    <option value="<%= c.codigo %>">
+                                        <%= c.nombre %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Costo</label>
+                            <input type="number" class="form-control" name="costo_actual" step="0.01" id="ruta_costo"
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Fecha de Apertura</label>
+                            <input type="date" class="form-control" name="fecha_apertura" id="ruta_fecha">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function abrirModalRuta() {
+            document.getElementById('rutaModalLabel').textContent = 'Agregar Ruta';
+            document.getElementById('formRuta').action = '/ruta/guardar';
+
+            document.getElementById('ruta_id').value = '';
+            document.getElementById('ruta_nombre').value = '';
+            document.getElementById('ruta_origen').value = '';
+            document.getElementById('ruta_destino').value = '';
+            document.getElementById('ruta_costo').value = '';
+            document.getElementById('ruta_fecha').value = '';
+        }
+
+        function abrirModalEditarRuta(id, nombre, cod_origen, cod_destino, costo, fecha) {
+            document.getElementById('rutaModalLabel').textContent = 'Editar Ruta';
+            document.getElementById('formRuta').action = '/ruta/editar/' + id;
+
+            document.getElementById('ruta_id').value = id;
+            document.getElementById('ruta_nombre').value = nombre;
+            document.getElementById('ruta_origen').value = cod_origen;
+            document.getElementById('ruta_destino').value = cod_destino;
+            document.getElementById('ruta_costo').value = costo;
+            document.getElementById('ruta_fecha').value = fecha;
+        }
+    </script>

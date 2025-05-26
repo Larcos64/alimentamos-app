@@ -26,6 +26,9 @@ app.use('/conductor', conductorRoutes);
 const proveedorRoutes = require('./routes/proveedor.routes');
 app.use('/proveedor', proveedorRoutes);
 
+const rutaRoutes = require('./routes/ruta.routes');
+app.use('/ruta', rutaRoutes);
+
 // Inicio
 app.get('/', (req, res) => {
     res.redirect('/ciudad');
