@@ -1,0 +1,163 @@
+<% layout('layout') %>
+
+    <div class="container mt-4">
+        <h2>Lista de Ventas</h2>
+        <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#ventaModal"
+            onclick="abrirModalVenta()">Agregar Venta</button>
+
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Valor</th>
+                    <th>Fecha Entrega</th>
+                    <th>Cliente</th>
+                    <th>Ruta</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (ventas.length> 0) { %>
+                    <% ventas.forEach(v=> { %>
+                        <tr>
+                            <td>
+                                <%= v.id %>
+                            </td>
+                            <td>
+                                <%= v.valor_venta %>
+                            </td>
+                            <td>
+                                <%= v.fecha_entrega.toISOString().split('T')[0] %>
+                            </td>
+                            <td>
+                                <%= v.nombre_cliente || 'N/A' %>
+                            </td>
+                            <td>
+                                <%= v.nombre_ruta || 'N/A' %>
+                            </td>
+                            <td>
+                                <% const fechaFormateada=v.fecha_entrega.toISOString().split('T')[0]; %>
+                                    <button class="btn btn-warning btn-sm"
+                                        onclick="abrirModalEditarVenta('<%= v.id %>', '<%= v.valor_venta %>', '<%= fechaFormateada %>', '<%= v.id_cliente %>', '<%= v.id_ruta %>')"
+                                        data-bs-toggle="modal" data-bs-target="#ventaModal">Editar</button>
+
+                                    <a href="/venta/eliminar/<%= v.id %>" class="btn btn-danger btn-sm">Eliminar</a>
+                            </td>
+                        </tr>
+                        <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="6" class="text-center">No hay ventas registradas.</td>
+                                </tr>
+                                <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal para agregar/editar venta -->
+    <div class="modal fade" id="ventaModal" tabindex="-1" aria-labelledby="ventaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" id="formVenta">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ventaModalLabel">Agregar Venta</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="valor_venta" class="form-label">Valor Venta</label>
+                            <input type="number" class="form-control" id="valor_venta" name="valor_venta" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fecha_entrega" class="form-label">Fecha Entrega</label>
+                            <input type="date" class="form-control" id="fecha_entrega" name="fecha_entrega" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_cliente" class="form-label">Cliente</label>
+                            <select class="form-select" id="id_cliente" name="id_cliente" required>
+                                <option value="">Seleccione un cliente</option>
+                                <% clientes.forEach(c=> { %>
+                                    <option value="<%= c.id %>">
+                                        <%= c.nombre %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_ruta" class="form-label">Ruta</label>
+                            <select class="form-select" id="id_ruta" name="id_ruta" required disabled>
+                                <option value="">Seleccione un cliente primero</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function cargarRutasPorCliente(idCliente) {
+            const selectRuta = document.getElementById('id_ruta');
+            selectRuta.disabled = true;
+            selectRuta.innerHTML = '<option value="">Cargando rutas...</option>';
+
+            if (!idCliente) {
+                selectRuta.innerHTML = '<option value="">Seleccione un cliente primero</option>';
+                return;
+            }
+
+            try {
+                const res = await fetch(`/venta/rutas-por-cliente/${idCliente}`);
+                const rutas = await res.json();
+
+                if (rutas.length === 0) {
+                    selectRuta.innerHTML = '<option value="">No hay rutas disponibles</option>';
+                } else {
+                    selectRuta.innerHTML = '<option value="">Seleccione una ruta</option>';
+                    rutas.forEach(ruta => {
+                        const option = document.createElement('option');
+                        option.value = ruta.id;
+                        option.textContent = ruta.nombre;
+                        selectRuta.appendChild(option);
+                    });
+                    selectRuta.disabled = false;
+                }
+            } catch (err) {
+                console.error('Error cargando rutas:', err);
+                selectRuta.innerHTML = '<option value="">Error al cargar</option>';
+            }
+        }
+
+        function abrirModalVenta() {
+            document.getElementById('ventaModalLabel').textContent = 'Agregar Venta';
+            document.getElementById('formVenta').action = '/venta/guardar';
+
+            document.getElementById('valor_venta').value = '';
+            document.getElementById('fecha_entrega').value = '';
+            document.getElementById('id_cliente').value = '';
+            document.getElementById('id_ruta').innerHTML = '<option value="">Seleccione un cliente primero</option>';
+            document.getElementById('id_ruta').disabled = true;
+        }
+
+        function abrirModalEditarVenta(id, valor_venta, fecha_entrega, id_cliente, id_ruta) {
+            document.getElementById('ventaModalLabel').textContent = 'Editar Venta';
+            document.getElementById('formVenta').action = '/venta/editar/' + id;
+
+            document.getElementById('valor_venta').value = valor_venta;
+            document.getElementById('fecha_entrega').value = fecha_entrega;
+            document.getElementById('id_cliente').value = id_cliente;
+
+            cargarRutasPorCliente(id_cliente).then(() => {
+                document.getElementById('id_ruta').value = id_ruta;
+            });
+        }
+
+        document.getElementById('id_cliente').addEventListener('change', function () {
+            cargarRutasPorCliente(this.value);
+        });
+    </script>

@@ -20,6 +20,11 @@ exports.listarClientes = async (req, res) => {
     }
 };
 
+exports.getClientes = async () => {
+  const result = await db.query('SELECT * FROM cliente');
+  return result.rows;
+};
+
 // Formulario crear
 exports.formularioCrear = async (req, res) => {
     try {
@@ -88,3 +93,4 @@ exports.eliminarCliente = async (req, res) => {
         res.status(500).send('Error al eliminar cliente');
     }
 };
+
