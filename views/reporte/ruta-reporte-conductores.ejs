@@ -1,0 +1,29 @@
+<% layout('layout') %>
+
+<div class="container mt-4">
+    <h2>Conductores asignados a las rutas</h2>
+    <a href="/ruta" class="btn btn-secondary mb-3">Volver a rutas</a>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Ruta</th>
+                <th>Conductor</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (reporte.length > 0) { %>
+                <% reporte.forEach(item => { %>
+                    <tr>
+                        <td><%= item.ruta %></td>
+                        <td><%= item.conductor %></td>
+                    </tr>
+                <% }) %>
+            <% } else { %>
+                <tr>
+                    <td colspan="2" class="text-center">No hay datos disponibles.</td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+</div>

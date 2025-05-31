@@ -75,10 +75,9 @@ exports.guardar = async (req, res) => {
 exports.editar = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nombre, cod_ciudad_origen, cod_ciudad_destino, costo_actual, fecha_apertura, id_conductor } = req.body;
+        const { nombre, cod_ciudad_origen, cod_ciudad_destino, fecha_apertura, id_conductor } = req.body;
 
         const fechaValida = fecha_apertura && fecha_apertura.trim() !== '' ? fecha_apertura : null;
-        const costo = parseFloat(costo_actual);
 
         await db.query(`
         UPDATE ruta

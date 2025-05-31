@@ -172,13 +172,13 @@
         async function abrirModalTelefonos(id, nombre) {
             document.getElementById('telefonosModalLabel').textContent = `Teléfonos de ${nombre}`;
             document.getElementById('telefono_nit_proveedor').value = id;
-            document.getElementById('formTelefono').action = `/proveedor/telefonos_proveedor/agregar/${id}`;
+            document.getElementById('formTelefono').action = `/proveedor/telefono_proveedor/agregar/${id}`;
 
             const lista = document.getElementById('listaTelefonos');
             lista.innerHTML = '';
 
             try {
-                const res = await fetch(`/proveedor/telefonos_proveedor/listar/${id}`);
+                const res = await fetch(`/proveedor/telefono_proveedor/listar/${id}`);
                 const data = await res.json();
                 data.telefonos.forEach(t => {
                     const li = document.createElement('li');
@@ -202,7 +202,7 @@
             if (!confirm('¿Estás seguro de eliminar este teléfono?')) return;
 
             try {
-                await fetch(`/proveedor/telefonos_proveedor/eliminar/${idTelefono}`, {
+                await fetch(`/proveedor/telefono_proveedor/eliminar/${idTelefono}`, {
                     method: 'DELETE',
                 });
                 abrirModalTelefonos(id, '');
@@ -215,7 +215,7 @@
             const nuevoTelefono = prompt('Editar teléfono:', telefonoActual);
             if (!nuevoTelefono) return;
 
-            fetch(`/proveedor/telefonos_proveedor/editar/${idTelefono}`, {
+            fetch(`/proveedor/telefono_proveedor/editar/${idTelefono}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

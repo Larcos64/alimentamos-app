@@ -184,13 +184,13 @@
     async function abrirModalTelefonos(id, nombreCompleto) {
       document.getElementById('telefonosModalLabel').textContent = `Teléfonos de ${nombreCompleto}`;
       document.getElementById('telefono_id_conductor').value = id;
-      document.getElementById('formTelefono').action = `/conductor/telefonos_conductor/agregar/${id}`;
+      document.getElementById('formTelefono').action = `/conductor/telefono_conductor/agregar/${id}`;
 
       const lista = document.getElementById('listaTelefonos');
       lista.innerHTML = '';
 
       try {
-        const res = await fetch(`/conductor/telefonos_conductor/listar/${id}`);
+        const res = await fetch(`/conductor/telefono_conductor/listar/${id}`);
         const data = await res.json();
         // Insertar nuevos elementos
         data.telefonos.forEach(t => {
@@ -217,7 +217,7 @@
       if (!confirm('¿Estás seguro de eliminar este teléfono?')) return;
 
       try {
-        await fetch(`/conductor/telefonos_conductor/eliminar/${idTelefono}`, {
+        await fetch(`/conductor/telefono_conductor/eliminar/${idTelefono}`, {
           method: 'DELETE',
         });
 
@@ -232,7 +232,7 @@
       const nuevoTelefono = prompt('Editar teléfono:', telefonoActual);
       if (!nuevoTelefono) return;
 
-      fetch(`/conductor/telefonos_conductor/editar/${idTelefono}`, {
+      fetch(`/conductor/telefono_conductor/editar/${idTelefono}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
