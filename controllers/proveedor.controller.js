@@ -3,7 +3,12 @@ const sedeController = require('./sede.controller');
 
 exports.listar = async (req, res) => {
     try {
-        const resultado = await db.query('SELECT * FROM proveedor ORDER BY nombre');
+        const resultado = await db.query(`
+            SELECT proveedor.*, sede.nombre AS nombre_sede
+            FROM proveedor
+            LEFT JOIN sede ON proveedor.id_sede = sede.id
+            ORDER BY proveedor.nombre;
+        `);
         const sedes = await sedeController.getSedes(); // 👈 obtener sedes
 
         res.render('proveedor/proveedor-list', {

@@ -1,23 +1,27 @@
 const db = require('../db');
 const clienteController = require('./cliente.controller');
 const rutaController = require('./ruta.controller');
+const sedeController = require('./sede.controller');
 
 exports.listarVentas = async (req, res) => {
     try {
         const ventas = await db.query(`
-            SELECT v.*, c.nombre AS nombre_cliente, r.nombre AS nombre_ruta 
+            SELECT v.*, c.nombre AS nombre_cliente, r.nombre AS nombre_ruta, s.nombre AS nombre_sede
             FROM venta v
             LEFT JOIN cliente c ON v.id_cliente = c.id
             LEFT JOIN ruta r ON v.id_ruta = r.id
+            LEFT JOIN sede s ON v.id_sede = s.id
         `);
 
+        const sedes = await sedeController.getSedes();
         const clientes = await clienteController.getClientes();
         const rutas = await rutaController.getRutas();
-
+        
         res.render('venta/venta-list', {
             ventas: ventas.rows,
             clientes,
-            rutas
+            rutas,
+            sedes
         });
     } catch (error) {
         console.log("error: ", error);
@@ -27,11 +31,11 @@ exports.listarVentas = async (req, res) => {
 };
 
 exports.guardarVenta = async (req, res) => {
-    const { valor_venta, fecha_entrega, id_cliente, id_ruta } = req.body;
-    try {
+    const { valor_venta, fecha_entrega, id_cliente, id_ruta, id_sede} = req.body;
+     try {
         await db.query(
-            'INSERT INTO venta (valor_venta, fecha_entrega, id_cliente, id_ruta) VALUES ($1, $2, $3, $4)',
-            [valor_venta, fecha_entrega, id_cliente, id_ruta]
+            'CALL gestionar_venta($1, NULL, $2, $3, $4, $5, $6)',
+            ['insert', id_cliente, id_ruta, id_sede, valor_venta, fecha_entrega]
         );
         res.redirect('/venta');
     } catch (error) {
@@ -42,12 +46,12 @@ exports.guardarVenta = async (req, res) => {
 };
 
 exports.editarVenta = async (req, res) => {
-    const { valor_venta, fecha_entrega, id_cliente, id_ruta } = req.body;
+    const { valor_venta, fecha_entrega, id_cliente, id_ruta, id_sede } = req.body;
     const { id } = req.params;
     try {
         await db.query(
-            'UPDATE venta SET valor_venta = $1, fecha_entrega = $2, id_cliente = $3, id_ruta = $4 WHERE id = $5',
-            [valor_venta, fecha_entrega, id_cliente, id_ruta, id]
+            'CALL gestionar_venta($1, $2, $3, $4, $5, $6, $7)',
+            ['update', id, id_cliente, id_ruta, id_sede, valor_venta, fecha_entrega]
         );
         res.redirect('/venta');
     } catch (error) {
@@ -58,7 +62,10 @@ exports.editarVenta = async (req, res) => {
 exports.eliminarVenta = async (req, res) => {
     const { id } = req.params;
     try {
-        await db.query('DELETE FROM venta WHERE id = $1', [id]);
+        await db.query(
+            'CALL gestionar_venta($1, $2)',
+            ['delete', id]
+        );
         res.redirect('/venta');
     } catch (error) {
         res.status(500).send('Error al eliminar la venta');
