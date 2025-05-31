@@ -32,6 +32,12 @@ app.use('/ruta', rutaRoutes);
 const ventaRoutes = require('./routes/venta.routes');
 app.use('/venta', ventaRoutes);
 
+const reporteRoutes = require('./routes/reporte.routes');
+app.use('/reporte', reporteRoutes);
+
+const sedeRoutes = require('./routes/sede.routes');
+app.use('/sede', sedeRoutes);
+
 // Inicio
 app.get('/', (req, res) => {
     res.redirect('/ciudad');

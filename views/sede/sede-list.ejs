@@ -1,0 +1,91 @@
+<% layout('layout') %>
+
+<div class="container mt-4">
+  <h2>Lista de Sedes</h2>
+  <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#sedeModal" onclick="abrirModalSede()">Agregar Sede</button>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Ciudad</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (sedes.length > 0) { %>
+        <% sedes.forEach(sede => { %>
+          <tr>
+            <td><%= sede.id %></td>
+            <td><%= sede.nombre %></td>
+            <td><%= sede.nombre_ciudad || 'N/A' %></td>
+            <td>
+              <button class="btn btn-warning btn-sm"
+                onclick="abrirModalEditarSede('<%= sede.id %>', '<%= sede.nombre %>', '<%= sede.cod_ciudad %>')"
+                data-bs-toggle="modal" data-bs-target="#sedeModal">
+                Editar
+              </button>
+              <a href="/sede/eliminar/<%= sede.id %>" class="btn btn-danger btn-sm">Eliminar</a>
+            </td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr>
+          <td colspan="4" class="text-center">No hay sedes registradas.</td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="sedeModal" tabindex="-1" aria-labelledby="sedeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" id="formSede">
+        <div class="modal-header">
+          <h5 class="modal-title" id="sedeModalLabel">Agregar Sede</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" required>
+          </div>
+          <div class="mb-3">
+            <label for="cod_ciudad" class="form-label">Ciudad</label>
+            <select class="form-select" id="cod_ciudad" name="cod_ciudad" required>
+              <option value="">Seleccione una ciudad</option>
+              <% ciudades.forEach(c => { %>
+                <option value="<%= c.codigo %>"><%= c.nombre %></option>
+              <% }) %>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Guardar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function abrirModalSede() {
+    document.getElementById('sedeModalLabel').textContent = 'Agregar Sede';
+    document.getElementById('formSede').action = '/sede/guardar';
+
+    document.getElementById('nombre').value = '';
+    document.getElementById('cod_ciudad').value = '';
+  }
+
+  function abrirModalEditarSede(id, nombre, cod_ciudad) {
+    document.getElementById('sedeModalLabel').textContent = 'Editar Sede';
+    document.getElementById('formSede').action = '/sede/editar/' + id;
+
+    document.getElementById('nombre').value = nombre;
+    document.getElementById('cod_ciudad').value = cod_ciudad;
+  }
+</script>
