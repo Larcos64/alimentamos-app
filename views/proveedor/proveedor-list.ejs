@@ -12,6 +12,7 @@
                     <th>Nombre</th>
                     <th>Dirección</th>
                     <th>Contacto</th>
+                    <th>Sede</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -32,10 +33,13 @@
                                 <%= p.contacto || '' %>
                             </td>
                             <td>
+                                <%= p.id_sede || '' %>
+                            </td>
+                            <td>
                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#proveedorModal" data-id="<%= p.id %>"
-                                    data-nombre="<%= p.nombre %>" data-direccion="<%= p.direccion %>"
-                                    data-contacto="<%= p.contacto %>"
+                                    data-bs-target="#proveedorModal" data-id="<%= p.id %>" data-nombre="<%= p.nombre %>"
+                                    data-direccion="<%= p.direccion %>" data-contacto="<%= p.contacto %>"
+                                    data-id_sede="<%= p.id_sede %>"
                                     onclick="abrirModalEditarProveedorDesdeDataset(this)">Editar</button>
 
                                 <button class="btn btn-info btn-sm"
@@ -79,6 +83,17 @@
                         <div class="mb-3">
                             <label for="contacto" class="form-label">Contacto</label>
                             <input type="text" class="form-control" id="contacto" name="contacto">
+                        </div>
+                        <div class="mb-3">
+                            <label for="id_sede" class="form-label">Sede</label>
+                            <select class="form-select" id="id_sede" name="id_sede" required>
+                                <option value="">Seleccione una sede</option>
+                                <% sedes.forEach(s=> { %>
+                                    <option value="<%= s.id %>">
+                                        <%= s.nombre %>
+                                    </option>
+                                    <% }) %>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -125,6 +140,7 @@
             const nombre = button.dataset.nombre;
             const direccion = button.dataset.direccion;
             const contacto = button.dataset.contacto;
+            const id_sede = button.dataset.id_sede;
 
             document.getElementById('id').value = id;
             document.getElementById('id').readOnly = true;
@@ -132,6 +148,7 @@
             document.getElementById('nombre').value = nombre;
             document.getElementById('direccion').value = direccion;
             document.getElementById('contacto').value = contacto;
+            document.getElementById('id_sede').value = id_sede || '';
 
             document.querySelector('#proveedorModal form').action = '/proveedor/editar/' + id;
             document.getElementById('modalTitulo').textContent = 'Editar Proveedor';
@@ -149,6 +166,7 @@
             document.getElementById('nombre').value = '';
             document.getElementById('direccion').value = '';
             document.getElementById('contacto').value = '';
+            document.getElementById('id_sede').value = '';
         }
 
         async function abrirModalTelefonos(id, nombre) {

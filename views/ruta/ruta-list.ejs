@@ -45,6 +45,12 @@
                                     data-bs-toggle="modal" data-bs-target="#rutaModal">
                                     Editar
                                 </button>
+
+                                <button class="btn btn-info btn-sm" onclick="abrirModalCosto('<%= r.id %>')"
+                                    data-bs-toggle="modal" data-bs-target="#costoModal">
+                                    Actualizar Costo
+                                </button>
+
                                 <a href="/ruta/eliminar/<%= r.id %>" class="btn btn-danger btn-sm">Eliminar</a>
                             </td>
                         </tr>
@@ -114,6 +120,32 @@
         </div>
     </div>
 
+    <!-- Modal Actualizar Costo -->
+    <div class="modal fade" id="costoModal" tabindex="-1" aria-labelledby="costoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="POST" id="formCosto">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="costoModalLabel">Actualizar Costo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="id_ruta" id="id_ruta_costo">
+                        <div class="mb-3">
+                            <label class="form-label">Nuevo Costo</label>
+                            <input type="number" class="form-control" name="nuevo_costo" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Actualizar</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
     <script>
         function abrirModalRuta() {
             document.getElementById('rutaModalLabel').textContent = 'Agregar Ruta';
@@ -137,5 +169,10 @@
             document.getElementById('ruta_destino').value = cod_destino;
             document.getElementById('ruta_costo').value = costo;
             document.getElementById('ruta_fecha').value = fecha;
+        }
+
+        function abrirModalCosto(id) {
+            document.getElementById('formCosto').action = '/ruta/costo/' + id;
+            document.getElementById('id_ruta_costo').value = id;
         }
     </script>
