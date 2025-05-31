@@ -11,8 +11,8 @@ router.post('/editar/:id', proveedorController.editar);
 router.get('/eliminar/:id', proveedorController.eliminar);
 
 // Rutas teléfonos proveedor
-router.get('/telefonos_proveedor/listar/:nit', telefonosProveedorController.listarTelefonos);
-router.post('/telefonos_proveedor/agregar/:nit', telefonosProveedorController.agregarTelefono);
+router.get('/telefonos_proveedor/listar/:id', telefonosProveedorController.listarTelefonos);
+router.post('/telefonos_proveedor/agregar/:id', telefonosProveedorController.agregarTelefono);
 router.post('/telefonos_proveedor/editar/:id', telefonosProveedorController.editarTelefono);
 router.delete('/telefonos_proveedor/eliminar/:id', telefonosProveedorController.eliminarTelefono);
 

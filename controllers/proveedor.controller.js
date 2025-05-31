@@ -13,20 +13,20 @@ exports.listar = async (req, res) => {
 };
 
 exports.guardar = async (req, res) => {
-    const { nit, nombre, direccion, contacto } = req.body;
-    await pool.query('INSERT INTO proveedor (nit, nombre, direccion, contacto) VALUES ($1, $2, $3, $4)', [nit, nombre, direccion, contacto]);
+    const { id, nombre, direccion, contacto } = req.body;
+    await pool.query('INSERT INTO proveedor (id, nombre, direccion, contacto) VALUES ($1, $2, $3, $4)', [id, nombre, direccion, contacto]);
     res.redirect('/proveedor');
 };
 
 exports.eliminar = async (req, res) => {
-    const { nit } = req.params;
-    await pool.query('DELETE FROM proveedor WHERE nit = $1', [nit]);
+    const { id } = req.params;
+    await pool.query('DELETE FROM proveedor WHERE id = $1', [id]);
     res.redirect('/proveedor');
 };
 
 exports.editar = async (req, res) => {
-    const { nit } = req.params;
+    const { id } = req.params;
     const { nombre, direccion, contacto } = req.body;
-    await pool.query('UPDATE proveedor SET nombre = $1, direccion = $2, contacto = $3 WHERE nit = $4', [nombre, direccion, contacto, nit]);
+    await pool.query('UPDATE proveedor SET nombre = $1, direccion = $2, contacto = $3 WHERE id = $4', [nombre, direccion, contacto, id]);
     res.redirect('/proveedor');
 };

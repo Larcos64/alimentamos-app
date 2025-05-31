@@ -1,9 +1,9 @@
 const pool = require('../db');
 
 exports.listarTelefonos = async (req, res) => {
-    const { nit } = req.params;
+    const { id } = req.params;
     try {
-        const result = await pool.query('SELECT id, telefono FROM telefonos_proveedor WHERE id_proveedor = $1 ORDER BY id', [nit]);
+        const result = await pool.query('SELECT id, telefono FROM telefonos_proveedor WHERE id_proveedor = $1 ORDER BY id', [id]);
         res.json({ telefonos: result.rows });
     } catch (err) {
         console.error('Error al listar teléfonos:', err);
@@ -12,10 +12,10 @@ exports.listarTelefonos = async (req, res) => {
 };
 
 exports.agregarTelefono = async (req, res) => {
-    const { nit } = req.params;
+    const { id } = req.params;
     const { telefono } = req.body;
     try {
-        await pool.query('INSERT INTO telefonos_proveedor (id_proveedor, telefono) VALUES ($1, $2)', [nit, telefono]);
+        await pool.query('INSERT INTO telefonos_proveedor (id_proveedor, telefono) VALUES ($1, $2)', [id, telefono]);
         res.json({ success: true });
     } catch (err) {
         console.error('Error al agregar teléfono:', err);
