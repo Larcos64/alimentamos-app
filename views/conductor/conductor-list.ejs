@@ -13,6 +13,7 @@
           <th>Apellidos</th>
           <th>Dirección</th>
           <th>Fecha Ingreso</th>
+          <th>Fecha Asignación</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -36,10 +37,14 @@
                 <%= c.fecha_ingreso ? c.fecha_ingreso.toISOString().split('T')[0] : '' %>
               </td>
               <td>
+                <%= c.fecha_asignacion ? c.fecha_asignacion.toISOString().split('T')[0] : '' %>
+              </td>
+              <td>
                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#conductorModal"
                   data-id="<%= c.id %>" data-nombres="<%= c.nombres %>" data-apellidos="<%= c.apellidos %>"
                   data-direccion="<%= c.direccion %>"
                   data-fecha_ingreso="<%= c.fecha_ingreso ? c.fecha_ingreso.toISOString().split('T')[0] : '' %>"
+                  data-fecha_asignacion="<%= c.fecha_asignacion ? c.fecha_asignacion.toISOString().split('T')[0] : '' %>"
                   onclick="abrirModalEditarConductorDesdeDataset(this)">
                   Editar
                 </button>
@@ -90,6 +95,10 @@
               <label for="fecha_ingreso" class="form-label">Fecha de Ingreso</label>
               <input type="date" class="form-control" id="fecha_ingreso" name="fecha_ingreso">
             </div>
+            <div class="mb-3">
+              <label for="fecha_asignacion" class="form-label">Fecha de Asignación</label>
+              <input type="date" class="form-control" id="fecha_asignacion" name="fecha_asignacion">
+            </div>
           </div>
           <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Guardar</button>
@@ -137,6 +146,7 @@
       const apellidos = button.dataset.apellidos;
       const direccion = button.dataset.direccion;
       const fechaIngreso = button.dataset.fecha_ingreso;
+      const fechaAsignacion = button.dataset.fecha_asignacion;
 
       // Asignar valores al formulario
       document.getElementById('id').value = id;
@@ -146,6 +156,7 @@
       document.getElementById('apellidos').value = apellidos;
       document.getElementById('direccion').value = direccion;
       document.getElementById('fecha_ingreso').value = fechaIngreso;
+      document.getElementById('fecha_asignacion').value = fechaAsignacion;
 
       // Actualizar el formulario
       document.querySelector('#conductorModal form').action = '/conductor/editar/' + id;
@@ -167,6 +178,7 @@
       document.getElementById('apellidos').value = '';
       document.getElementById('direccion').value = '';
       document.getElementById('fecha_ingreso').value = '';
+      document.getElementById('fecha_asignacion').value = '';
     }
 
     async function abrirModalTelefonos(id, nombreCompleto) {

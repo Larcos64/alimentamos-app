@@ -14,6 +14,7 @@
                     <th>Ciudad Destino</th>
                     <th>Costo</th>
                     <th>Fecha Apertura</th>
+                    <th>Conductor</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -40,8 +41,11 @@
                                 <%= r.fecha_apertura ? r.fecha_apertura.toISOString().split('T')[0] : '' %>
                             </td>
                             <td>
+                                <%= r.nombre_conductor %>
+                            </td>
+                            <td>
                                 <button class="btn btn-warning btn-sm"
-                                    onclick="abrirModalEditarRuta('<%= r.id %>', '<%= r.nombre %>', '<%= r.cod_ciudad_origen %>', '<%= r.cod_ciudad_destino %>', '<%= r.costo_actual %>', '<%= r.fecha_apertura_formateada %>')"
+                                    onclick="abrirModalEditarRuta('<%= r.id %>', '<%= r.nombre %>', '<%= r.cod_ciudad_origen %>', '<%= r.cod_ciudad_destino %>', '<%= r.costo_actual %>', '<%= r.fecha_apertura_formateada %>', '<%= r.id_conductor %>')"
                                     data-bs-toggle="modal" data-bs-target="#rutaModal">
                                     Editar
                                 </button>
@@ -102,6 +106,18 @@
                             </select>
                         </div>
                         <div class="mb-3">
+                            <label class="form-label">Conductor</label>
+                            <select class="form-select" name="id_conductor" id="ruta_conductor">
+                                <option value="">Sin asignar</option>
+                                <% conductores.forEach(con=> { %>
+                                    <option value="<%= con.id %>">
+                                        <%= con.nombres %>
+                                            <%= con.apellidos %>
+                                    </option>
+                                    <% }) %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label">Costo</label>
                             <input type="number" class="form-control" name="costo_actual" step="0.01" id="ruta_costo"
                                 required>
@@ -157,9 +173,10 @@
             document.getElementById('ruta_destino').value = '';
             document.getElementById('ruta_costo').value = '';
             document.getElementById('ruta_fecha').value = '';
+            document.getElementById('ruta_conductor').value = '';
         }
 
-        function abrirModalEditarRuta(id, nombre, cod_origen, cod_destino, costo, fecha) {
+        function abrirModalEditarRuta(id, nombre, cod_origen, cod_destino, costo, fecha, id_conductor) {
             document.getElementById('rutaModalLabel').textContent = 'Editar Ruta';
             document.getElementById('formRuta').action = '/ruta/editar/' + id;
 
@@ -169,6 +186,7 @@
             document.getElementById('ruta_destino').value = cod_destino;
             document.getElementById('ruta_costo').value = costo;
             document.getElementById('ruta_fecha').value = fecha;
+            document.getElementById('ruta_conductor').value = id_conductor;
         }
 
         function abrirModalCosto(id) {

@@ -1,0 +1,29 @@
+<% layout('layout') %>
+
+<div class="container mt-4">
+    <h2>Reporte de Ventas por Ciudad</h2>
+    <a href="/venta" class="btn btn-secondary mb-3">Volver a ventas</a>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Ciudad</th>
+                <th>Total Ventas</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (reporte.length > 0) { %>
+                <% reporte.forEach(item => { %>
+                    <tr>
+                        <td><%= item.ciudad %></td>
+                        <td>$ <%= item.total_ventas.toLocaleString() %></td>
+                    </tr>
+                <% }) %>
+            <% } else { %>
+                <tr>
+                    <td colspan="2" class="text-center">No hay datos disponibles.</td>
+                </tr>
+            <% } %>
+        </tbody>
+    </table>
+</div>

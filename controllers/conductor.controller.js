@@ -11,6 +11,11 @@ exports.listar = async (req, res) => {
     }
 };
 
+exports.getConductores = async () => {
+    const result = await db.query('SELECT * FROM CONDUCTOR');
+    return result.rows;
+};
+
 // Obtener un conductor por ID
 exports.obtener = async (req, res) => {
     try {
@@ -28,11 +33,11 @@ exports.obtener = async (req, res) => {
 
 // Guardar nuevo conductor
 exports.guardar = async (req, res) => {
-    const { id, nombres, apellidos, direccion, fecha_ingreso } = req.body;
+    const { id, nombres, apellidos, direccion, fecha_ingreso, fecha_asignacion } = req.body;
     try {
         await db.query(
-            'INSERT INTO conductor (id, nombres, apellidos, direccion, fecha_ingreso) VALUES ($1, $2, $3, $4, $5)',
-            [id, nombres, apellidos, direccion, fecha_ingreso || null]
+            'INSERT INTO conductor (id, nombres, apellidos, direccion, fecha_ingreso, fecha_asignacion) VALUES ($1, $2, $3, $4, $5, $6)',
+            [id, nombres, apellidos, direccion, fecha_ingreso || null, fecha_asignacion || null]
         );
         res.redirect('/conductor');
     } catch (error) {
@@ -43,11 +48,11 @@ exports.guardar = async (req, res) => {
 
 // Editar conductor existente
 exports.editar = async (req, res) => {
-    const { nombres, apellidos, direccion, fecha_ingreso } = req.body;
+    const { nombres, apellidos, direccion, fecha_ingreso, fecha_asignacion } = req.body;
     try {
         await db.query(
-            'UPDATE conductor SET nombres = $1, apellidos = $2, direccion = $3, fecha_ingreso = $4 WHERE id = $5',
-            [nombres, apellidos, direccion, fecha_ingreso || null, req.params.id]
+        'UPDATE conductor SET nombres = $1, apellidos = $2, direccion = $3, fecha_ingreso = $4, fecha_asignacion = $5 WHERE id = $6',
+        [nombres, apellidos, direccion, fecha_ingreso || null, fecha_asignacion || null, req.params.id]
         );
         res.redirect('/conductor');
     } catch (error) {
