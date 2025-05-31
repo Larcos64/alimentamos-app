@@ -37,6 +37,12 @@
                   data-bs-toggle="modal" data-bs-target="#clienteModal">
                   Editar
                 </button>
+
+                <button class="btn btn-info btn-sm"
+                  onclick="abrirModalTelefonosCliente('<%= cliente.id %>', '<%= cliente.nombre %>')">
+                  Teléfonos
+                </button>
+
                 <a href="/cliente/eliminar/<%= cliente.id %>" class="btn btn-danger btn-sm">Eliminar</a>
               </td>
             </tr>
@@ -94,6 +100,37 @@
     </div>
   </div>
 
+  <!-- Modal Teléfonos Cliente -->
+  <div class="modal fade" id="telefonosClienteModal" tabindex="-1" aria-labelledby="telefonosClienteModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="formTelefonoCliente" method="POST">
+          <div class="modal-header">
+            <h5 class="modal-title" id="telefonosClienteModalLabel">Teléfonos de Cliente</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="telefono_id_cliente" name="id">
+            <div class="mb-3">
+              <label for="telefono" class="form-label">Nuevo Teléfono</label>
+              <input type="text" class="form-control" id="telefono" name="telefono" required>
+            </div>
+            <div class="mb-3">
+              <strong>Teléfonos actuales:</strong>
+              <ul id="listaTelefonosCliente" class="lista-telefonos"></ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Agregar Teléfono</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
   <script>
     function abrirModalCliente() {
       document.getElementById('clienteModalLabel').textContent = 'Agregar Cliente';
@@ -119,4 +156,68 @@
       document.getElementById('direccion').value = direccion;
       document.getElementById('cod_ciudad').value = cod_ciudad;
     }
+
+    async function abrirModalTelefonosCliente(id, nombre) {
+      document.getElementById('telefonosClienteModalLabel').textContent = `Teléfonos de ${nombre}`;
+      document.getElementById('telefono_id_cliente').value = id;
+      document.getElementById('formTelefonoCliente').action = `/cliente/telefono_cliente/agregar/${id}`;
+
+      const lista = document.getElementById('listaTelefonosCliente');
+      lista.innerHTML = '';
+
+      try {
+        const res = await fetch(`/cliente/telefono_cliente/listar/${id}`);
+        const data = await res.json();
+        data.telefonos.forEach(t => {
+          const li = document.createElement('li');
+          li.classList.add('d-flex', 'align-items-center', 'mb-2');
+          li.innerHTML = `
+        <span class="me-2">${t.telefono}</span>
+        <button class="btn btn-sm btn-warning me-1" onclick="editarTelefonoCliente(${t.id}, '${t.telefono}')">Editar</button>
+        <button class="btn btn-sm btn-danger" onclick="eliminarTelefonoCliente(${t.id}, '${id}')">Eliminar</button>
+      `;
+          lista.appendChild(li);
+        });
+      } catch (err) {
+        console.error('Error al obtener teléfonos:', err);
+      }
+
+      const modal = new bootstrap.Modal(document.getElementById('telefonosClienteModal'));
+      modal.show();
+    }
+
+    function editarTelefonoCliente(idTelefono, telefonoActual) {
+      const nuevoTelefono = prompt('Editar teléfono:', telefonoActual);
+      if (!nuevoTelefono) return;
+
+      fetch(`/cliente/telefono_cliente/editar/${idTelefono}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ telefono: nuevoTelefono })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            const id = document.getElementById('telefono_id_cliente').value;
+            abrirModalTelefonosCliente(id, '');
+          } else {
+            alert('Error al editar teléfono');
+          }
+        })
+        .catch(err => console.error('Error al editar teléfono:', err));
+    }
+
+    async function eliminarTelefonoCliente(idTelefono, id) {
+      if (!confirm('¿Estás seguro de eliminar este teléfono?')) return;
+
+      try {
+        await fetch(`/cliente/telefono_cliente/eliminar/${idTelefono}`, {
+          method: 'DELETE',
+        });
+        abrirModalTelefonosCliente(id, '');
+      } catch (err) {
+        console.error('Error al eliminar teléfono:', err);
+      }
+    }
+
   </script>

@@ -16,7 +16,7 @@ exports.agregarTelefono = async (req, res) => {
     const { telefono } = req.body;
     try {
         await pool.query('INSERT INTO telefono_proveedor (id_proveedor, telefono) VALUES ($1, $2)', [id, telefono]);
-        res.json({ success: true });
+        res.redirect('/proveedor');
     } catch (err) {
         console.error('Error al agregar teléfono:', err);
         res.status(500).json({ error: 'Error al agregar teléfono' });

@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const proveedorController = require('../controllers/proveedor.controller');
 const telefonosProveedorController = require('../controllers/telefono_proveedor.controller');
-console.log('telefonosProveedorController:', telefonosProveedorController);
 
 // Rutas proveedor
 router.get('/', proveedorController.listar);
