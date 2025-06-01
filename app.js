@@ -5,7 +5,7 @@ const engine = require('ejs-mate');
 const app = express();
 
 // Configuración
-app.engine('ejs', engine); // 👈 Usa ejs-mate como motor
+app.engine('ejs', engine); // ejs-mate como motor
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));

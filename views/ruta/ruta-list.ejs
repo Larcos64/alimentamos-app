@@ -105,6 +105,11 @@
                                     <% }) %>
                             </select>
                         </div>
+                        <div class="mb-3" id="grupo_costo">
+                            <label class="form-label">Costo de Ruta</label>
+                            <input type="number" class="form-control" name="costo_actual" id="ruta_costo" step="0.01"
+                                min="0" required>
+                        </div>
                         <div class="mb-3">
                             <label class="form-label">Conductor</label>
                             <select class="form-select" name="id_conductor" id="ruta_conductor">
@@ -169,6 +174,9 @@
             document.getElementById('ruta_costo').value = '';
             document.getElementById('ruta_fecha').value = '';
             document.getElementById('ruta_conductor').value = '';
+
+            document.getElementById('grupo_costo').style.display = 'block';
+            document.getElementById('ruta_costo').required = true;
         }
 
         function abrirModalEditarRuta(id, nombre, cod_origen, cod_destino, costo, fecha, id_conductor) {
@@ -182,6 +190,10 @@
             document.getElementById('ruta_costo').value = costo;
             document.getElementById('ruta_fecha').value = fecha;
             document.getElementById('ruta_conductor').value = id_conductor;
+
+            // Oculta el campo de costo en modo edición
+            document.getElementById('grupo_costo').style.display = 'none';
+            document.getElementById('ruta_costo').required = false;
         }
 
         function abrirModalCosto(id) {
